@@ -1,0 +1,24 @@
+{
+    "name": "drupal/improved_contrib_ui_core",
+    "type": "drupal-module",
+    "description": ".",
+    "homepage": "http://drupal.org/project/commerce",
+    "license": "GPL-2.0+",
+    "repositories": {
+        "asset-packagist": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
+    "require": {
+        "oomphinc/composer-installers-extender": "^1.1",
+        "npm-asset/react": "^16.5",
+        "npm-asset/redux": "^4.0",
+        "npm-asset/react-redux": "^5.0",
+        "npm-asset/redux-thunk": "^2.3",
+        "npm-asset/react-dom": "^16.5",
+        "npm-asset/semantic-ui-react": "^0.82",
+        "npm-asset/reselect": "^3.0"
+    },
+    "minimum-stability": "dev"
+}
