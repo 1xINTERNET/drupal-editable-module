@@ -9,7 +9,7 @@ To this end it provides several utilities:
 - It exposes a number of utility functions from commonly used libraries:
   - `connect` from `react-redux`
   - `css` from `emotion`
-  - `createSelector` from `reselect``
+  - `createSelector` from `reselect`
 - It exposes some commonly used normalizer functions to work with JSON:API data:
   - `getQueryFromEntityReference` can be used to turn an entity reference into the correct props to use the `Query` component
   - `getQueryFromRIO` can be used to turn a resource identifier object into the correct props to use the `Query` component
@@ -33,7 +33,7 @@ Props are:
 - `type` - mandatory `string`
 - `uuid` - optional, `string|string[]`
 
-```html
+```jsx
 <Query bundle={} type={} uuid={}>
     {({loading, error, data}) => {
 
@@ -53,7 +53,7 @@ EditableEntity contains a locally cached set of changes which are not synced wit
 
 Its only prop is `data` which contains the data. If it is called without this the render function is called regardless, the callbacks passed to the render function in this case are `null`.
 
-```html
+```jsx
 <EditableEntity data={}>
     {({
       change,
@@ -82,7 +82,7 @@ Its child is a render function which is called with a parameter object containin
 
 Loading an entity and providing an input field with the data which saves any changes while typing.
 
-```html
+```jsx
 <Query bundle="node" type="page" uuid="ee97df22-519f-43bf-95e0-294961dc8d23">
     {({loading, error, data}) => {
       <div>
