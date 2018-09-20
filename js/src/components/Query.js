@@ -1,12 +1,21 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { readEndpoint } from "redux-json-api";
 
-import { isDev } from "../utils";
+import { DataSet } from ".";
 
-import { DataSet } from "..";
+class QueryPresentational extends PureComponent {
+  static propTypes = {
+    children: PropTypes.func.isRequired,
+    bundle: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    uuid: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOfType(PropTypes.string)
+    ])
+  };
 
-class Query extends Component {
   static defaultProps = {
     uuid: null
   };
@@ -20,27 +29,37 @@ class Query extends Component {
     this.fetchData();
   }
 
-  handleRefetch = () => {
-    this.fetchData();
-  };
-
+  /**
+   * Fetch the actual data from the API
+   *
+   * @return {Promise<void>} Resolved when the data was retrieved
+   */
   fetchData = async () => {
-    const { dispatch, bundle, type, uuid } = this.props;
-    const endpoint = `${bundle}/${type}${uuid ? `/${uuid}` : ""}`;
-    this.setState({ loading: true });
     try {
+      const { dispatch, bundle, type, uuid } = this.props;
+      const endpoint = `${bundle}/${type}${uuid ? `/${uuid}` : ""}`;
+      await this._setState({ loading: true });
       const {
         body: { data: resourceIds }
       } = await dispatch(readEndpoint(endpoint));
 
-      this.setState({ loading: false, resourceIds });
+      await this._setState({ loading: false, resourceIds });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
-
-      this.setState({ loading: false, error: e });
+      await this._setState({ loading: false, error: e });
     }
   };
+
+  /**
+   * setState but it's a promise
+   *
+   * @param {any} state The parameter passed to setState
+   * @return {Promise<void>} Resolved when the state was updated
+   */
+  async _setState(state) {
+    return new Promise(res => this.setState(state, res));
+  }
 
   render() {
     const { loading, resourceIds, error } = this.state;
@@ -51,7 +70,7 @@ class Query extends Component {
         loading={loading}
         resourceIds={resourceIds}
         error={error && error.toString()}
-        doRefetch={this.handleRefetch}
+        refetch={this.fetchData}
       >
         {children}
       </DataSet>
@@ -59,19 +78,4 @@ class Query extends Component {
   }
 }
 
-if (isDev) {
-  const PropTypes = require("prop-types");
-  Query.propTypes = {
-    children: PropTypes.element.isRequired,
-    bundle: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    uuid: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOfType(PropTypes.string)
-    ])
-  };
-}
-
-const QueryContainer = connect()(Query);
-
-export { QueryContainer as Query, Query as QueryPresentational };
+export const Query = connect()(QueryPresentational);
