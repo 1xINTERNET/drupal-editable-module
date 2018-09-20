@@ -66,7 +66,7 @@ Its only prop is `data` which contains the data. If it is called without this th
     }) => {
 
     }}
-</Editable>
+</EditableEntity>
 ```
 
 Its child is a render function which is called with a parameter object containing the following properties:
