@@ -2,8 +2,6 @@ main:
   version: VERSION
   js:
     js/dist/bundle.js: {}
-  css:
-    theme:
-      js/dist/main.css: {}
   dependencies:
     - core/drupalSettings
+    - core/drupal.debounce

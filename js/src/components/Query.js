@@ -6,15 +6,23 @@ import { isDev } from "../utils";
 
 import { DataSet } from "..";
 
-class EntityQuery extends Component {
+class Query extends Component {
+  static defaultProps = {
+    uuid: null
+  };
+
   state = {
     loading: false,
-    resourceIds: []
+    resourceIds: null
   };
 
   componentDidMount() {
     this.fetchData();
   }
+
+  handleRefetch = () => {
+    this.fetchData();
+  };
 
   fetchData = async () => {
     const { dispatch, bundle, type, uuid } = this.props;
@@ -22,14 +30,10 @@ class EntityQuery extends Component {
     this.setState({ loading: true });
     try {
       const {
-        body: { data }
+        body: { data: resourceIds }
       } = await dispatch(readEndpoint(endpoint));
-      const resources = Array.isArray(data) ? data : [data];
 
-      this.setState({
-        loading: false,
-        resourceIds: resources
-      });
+      this.setState({ loading: false, resourceIds });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -47,6 +51,7 @@ class EntityQuery extends Component {
         loading={loading}
         resourceIds={resourceIds}
         error={error && error.toString()}
+        doRefetch={this.handleRefetch}
       >
         {children}
       </DataSet>
@@ -56,17 +61,17 @@ class EntityQuery extends Component {
 
 if (isDev) {
   const PropTypes = require("prop-types");
-  EntityQuery.propTypes = {
+  Query.propTypes = {
     children: PropTypes.element.isRequired,
     bundle: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    uuid: PropTypes.string.isRequired
+    uuid: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOfType(PropTypes.string)
+    ])
   };
 }
 
-const EntityQueryContainer = connect()(EntityQuery);
+const QueryContainer = connect()(Query);
 
-export {
-  EntityQueryContainer as EntityQuery,
-  EntityQuery as EntityQueryPresentational
-};
+export { QueryContainer as Query, Query as QueryPresentational };
