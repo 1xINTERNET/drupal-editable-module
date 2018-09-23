@@ -1,17 +1,7 @@
 {
-  "name": "drupal/improved_contrib_ui_core",
+  "name": "drupal/editable",
   "type": "drupal-module",
   "description": ".",
-  "homepage": "http://drupal.org/project/commerce",
-  "license": "GPL-2.0+",
-  "repositories": {
-    "asset-packagist": {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
-  },
-  "require": {
-    "oomphinc/composer-installers-extender": "^1.1"
-  },
-  "minimum-stability": "dev"
+  "homepage": "http://drupal.org/project/editable",
+  "license": "GPL-2.0+"
 }

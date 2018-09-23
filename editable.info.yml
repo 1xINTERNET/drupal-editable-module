@@ -1,0 +1,5 @@
+name: Editable (Core)
+type: module
+description: "Provides a shared redux store with entity cache and utility functions and components to decouple Drupal"
+package: Editable
+core: 8.x

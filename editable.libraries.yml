@@ -1,0 +1,15 @@
+production:
+  version: VERSION
+  js:
+    js/dist/editable.js: {}
+  dependencies:
+    - core/drupalSettings
+    - core/drupal.debounce
+
+development:
+  version: VERSION
+  js:
+    js/dist/editable.dev.js: {}
+  dependencies:
+    - core/drupalSettings
+    - core/drupal.debounce

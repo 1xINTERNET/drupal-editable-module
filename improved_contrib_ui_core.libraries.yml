@@ -1,7 +1,0 @@
-main:
-  version: VERSION
-  js:
-    js/dist/bundle.js: {}
-  dependencies:
-    - core/drupalSettings
-    - core/drupal.debounce

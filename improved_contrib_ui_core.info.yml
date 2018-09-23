@@ -1,5 +1,0 @@
-name: Improved Contrib UI Core
-type: module
-description: "Experimental UI improvement – shared libraries"
-package: commerce_admin_order_advanced
-core: 8.x
