@@ -5,8 +5,6 @@ const {
   config: { namespace }
 } = require("../../package.json");
 
-export const isDev = process.env.NODE_ENV === "development";
-
 export const { Drupal, drupalSettings } = window;
 
 export const apiEndpoint =

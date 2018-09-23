@@ -1,3 +1,10 @@
+/**
+ * Transform a Resource Identifier Object into an object which can
+ * be passed to the Query component to resolve that entity.
+ *
+ * @param {object} relationship The resource identifier object
+ * @return {object|object[]} An object containing the props to query the entity
+ */
 export const getQueryFromRIO = relationship => {
   // Handle the data property.
   const data = Array.isArray(relationship)

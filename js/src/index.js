@@ -2,6 +2,7 @@ import { createStore } from "./utils";
 
 export const store = createStore();
 export { default as get } from "lodash.get";
+export { default as set } from "immutable-set";
 
 export { connect } from "react-redux";
 export { css } from "emotion";

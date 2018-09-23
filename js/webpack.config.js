@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const path = require("path");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
@@ -7,11 +5,10 @@ const eslintFormatter = require("react-dev-utils/eslintFormatter");
 const pckg = require("./package.json");
 
 const SCRIPT_NAME = process.env.npm_lifecycle_event;
+const ENV = process.env.NODE_ENV;
 
 const SRC_PATH = path.resolve(__dirname, "src");
 const DIST_PATH = path.resolve(__dirname, "dist");
-
-console.log(process.env.JS_DIR);
 
 const common = {
   entry: [
@@ -21,7 +18,7 @@ const common = {
   mode: "production",
   output: {
     path: DIST_PATH,
-    filename: "bundle.js",
+    filename: `${pckg.config.bundleName}.js`,
     library: pckg.config.namespace,
     libraryTarget: "umd"
   },
@@ -65,7 +62,7 @@ const common = {
   plugins: [
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+        NODE_ENV: JSON.stringify(ENV)
       }
     })
   ]
@@ -81,6 +78,12 @@ module.exports =
         }
       })
     : merge(common, {
+        output: {
+          filename: `${pckg.config.bundleName}${
+            ENV === "development" ? ".dev" : ""
+          }.js`
+        },
+        devtool: "source-map",
         mode: "production",
         performance: {
           maxEntrypointSize: 512000,

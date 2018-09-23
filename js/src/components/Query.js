@@ -5,14 +5,15 @@ import { readEndpoint } from "redux-json-api";
 
 import { DataSet } from ".";
 
-class QueryPresentational extends PureComponent {
+export class QueryPresentational extends PureComponent {
   static propTypes = {
     children: PropTypes.func.isRequired,
     bundle: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
+    dispatch: PropTypes.func.isRequired,
     uuid: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.arrayOfType(PropTypes.string)
+      PropTypes.arrayOf(PropTypes.string)
     ])
   };
 

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Query should render correctly 1`] = `
+<Connect(DataSetPresentational)
+  loading={false}
+  refetch={[Function]}
+  resourceIds="entityData"
+>
+  <Component />
+</Connect(DataSetPresentational)>
+`;

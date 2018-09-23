@@ -3,13 +3,18 @@ import PropTypes from "prop-types";
 
 import { selectResources } from "../selectors";
 
-const DataSetPresentational = ({ children, loading, data, error, refetch }) =>
-  children({ loading, data, error, refetch });
+export const DataSetPresentational = ({
+  children,
+  loading,
+  data,
+  error,
+  refetch
+}) => children({ loading, data, error, refetch });
 
 DataSetPresentational.propTypes = {
   children: PropTypes.func.isRequired,
   loading: PropTypes.boolean,
-  data: PropTypes.oneOfType([PropTypes.Array, PropTypes.Object]),
+  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   error: PropTypes.string,
   refetch: PropTypes.func.isRequired
 };
