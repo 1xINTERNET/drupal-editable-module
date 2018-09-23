@@ -7,21 +7,21 @@ import thunk from "redux-thunk";
 import { reducer as api, setAxiosConfig } from "redux-json-api";
 import {
   apiEndpoint,
-  extensionReducers,
-  extensionMiddlewares,
-  extensionEnhancers
+  getExtensionReducers,
+  getExtensionMiddlewares,
+  getExtensionEnhancers
 } from ".";
 
 export const createStore = () => {
   const reducer = combineReducers({
     api,
-    ...extensionReducers
+    ...getExtensionReducers()
   });
 
   const store = createReduxStore(
     reducer,
-    applyMiddleware(thunk, ...extensionMiddlewares),
-    ...extensionEnhancers
+    applyMiddleware(thunk, ...getExtensionMiddlewares()),
+    ...getExtensionEnhancers()
   );
 
   store.dispatch(

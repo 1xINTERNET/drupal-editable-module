@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import get from "lodash.get";
 
 const {
@@ -7,26 +6,21 @@ const {
 
 export const { Drupal, drupalSettings } = window;
 
-export const apiEndpoint =
-  get(drupalSettings, "improved_contrib_ui_core.api_endpoint") ||
-  `${window.location.protocol}//${window.location.host}/${get(
-    drupalSettings,
-    "improved_contrib_ui_core.jsonapi_base",
-    "jsonapi"
-  )}`;
+export const apiBase = get(
+  drupalSettings,
+  `${namespace}.jsonapi_base`,
+  "jsonapi"
+);
 
-export const extensionMiddlewares = get(
-  window,
-  `${namespace}.extension.middlewares`,
-  []
+export const apiEndpoint = get(
+  drupalSettings,
+  `${namespace}.api_endpoint`,
+  `${window.location.protocol}//${window.location.host}/${apiBase}`
 );
-export const extensionReducers = get(
-  window,
-  `${namespace}.extension.reducers`,
-  {}
-);
-export const extensionEnhancers = get(
-  window,
-  `${namespace}.extension.enhancers`,
-  []
-);
+
+export const getExtensionMiddlewares = () =>
+  get(window, `${namespace}.middlewares`, []);
+export const getExtensionReducers = () =>
+  get(window, `${namespace}.reducers`, {});
+export const getExtensionEnhancers = () =>
+  get(window, `${namespace}.enhancers`, []);
