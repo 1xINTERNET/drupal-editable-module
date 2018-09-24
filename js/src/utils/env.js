@@ -1,8 +1,6 @@
 import get from "lodash.get";
 
-const {
-  config: { namespace }
-} = require("../../package.json");
+const namespace = "editable";
 
 export const { Drupal, drupalSettings } = window;
 
