@@ -1,5 +1,5 @@
 {
-  "name": "@1xinternet/editable_base_components",
+  "name": "@1xinternet/editable-base-components",
   "version": "1.0.0",
   "description": "Provides commonly used components to decouple parts of the Drupal 8 admin UI",
   "main": "dist/editable_base_components.js",
@@ -25,6 +25,7 @@
     "babel-eslint": "^9.0.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
+    "cross-env": "^5.2.0",
     "emotion": "^9.2.9",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.5.0",
@@ -39,6 +40,8 @@
     "eslint-plugin-react": "^7.11.1",
     "immutable-set": "^2.1.0",
     "jest": "^23.6.0",
+    "lodash.uniqueid": "^4.0.1",
+    "npm-run-all": "^4.1.3",
     "prettier": "^1.14.2",
     "prop-types": "^15.6.2",
     "react": "^16.5.1",

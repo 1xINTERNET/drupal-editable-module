@@ -1,0 +1,13 @@
+production:
+  version: VERSION
+  js:
+    js/dist/editable_base_components.js: {}
+  dependencies:
+    - editable/production
+
+development:
+  version: VERSION
+  js:
+    js/dist/editable_base_components.dev.js: {}
+  dependencies:
+    - editable/development
