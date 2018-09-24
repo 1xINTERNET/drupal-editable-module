@@ -38,7 +38,7 @@ export class QueryPresentational extends PureComponent {
   fetchData = async () => {
     try {
       const { dispatch, bundle, type, uuid } = this.props;
-      const endpoint = `${bundle}/${type}${uuid ? `/${uuid}` : ""}`;
+      const endpoint = `${type}/${bundle}${uuid ? `/${uuid}` : ""}`;
       await this._setState({ loading: true });
       const {
         body: { data: resourceIds }

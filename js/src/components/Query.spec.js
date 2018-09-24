@@ -42,7 +42,7 @@ describe("Query", () => {
 
   it("should call readEndpoint with the correct endpoint parameter when fetching", () => {
     expect(readEndpointSpy).toHaveBeenCalledWith(
-      `${BUNDLE_PROP}/${TYPE_PROP}/${UUID_PROP}`
+      `${TYPE_PROP}/${BUNDLE_PROP}/${UUID_PROP}`
     );
   });
 });

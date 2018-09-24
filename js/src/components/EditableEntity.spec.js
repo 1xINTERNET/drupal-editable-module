@@ -28,7 +28,7 @@ const CHANGED_FIELD_2_VALUE = "new field 2 value";
 
 const ENTITY = {
   id: UUID_PROP,
-  type: `${BUNDLE_PROP}--${TYPE_PROP}`,
+  type: `${TYPE_PROP}--${BUNDLE_PROP}`,
   attributes: {
     field: ORIGINAL_FIELD_1_VALUE,
     otherField: ORIGINAL_FIELD_2_VALUE
@@ -153,7 +153,7 @@ describe("EditableEntity", () => {
         field: CHANGED_FIELD_1_VALUE
       },
       id: UUID_PROP,
-      type: `${BUNDLE_PROP}--${TYPE_PROP}`
+      type: `${TYPE_PROP}--${BUNDLE_PROP}`
     });
   });
 });
