@@ -1,6 +1,6 @@
 {
   "name": "@1xinternet/editable-core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Provides a shared redux store with entity cache and utility functions and components to decouple Drupal",
   "main": "dist/editable.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "babel-eslint": "^10.0.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
+    "classnames": "^2.2.6",
     "cross-env": "^5.2.0",
     "emotion": "^9.2.10",
     "enzyme": "^3.6.0",
