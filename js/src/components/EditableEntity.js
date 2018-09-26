@@ -56,7 +56,7 @@ export class EditableEntityPresentational extends PureComponent {
   handleChange = async ({
     target: {
       value: propValue,
-      dataset: { dataPropPath: propPath }
+      dataset: { propPath }
     }
   }) => {
     if (!propPath) {
