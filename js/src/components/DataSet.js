@@ -13,7 +13,7 @@ export const DataSetPresentational = ({
 
 DataSetPresentational.propTypes = {
   children: PropTypes.func.isRequired,
-  loading: PropTypes.boolean,
+  loading: PropTypes.bool,
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   error: PropTypes.string,
   refetch: PropTypes.func.isRequired
