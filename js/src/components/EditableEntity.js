@@ -102,10 +102,13 @@ export class EditableEntityPresentational extends PureComponent {
 
     try {
       if (changes) {
-        const entityWithChanges = this._applyChanges({
+        const entityWithChanges = this._applyChanges(
+          {
           id,
           type
-        });
+          },
+          true
+        );
         await this._setState({ saving: true });
         await dispatch(updateResource(entityWithChanges));
       }
@@ -153,16 +156,38 @@ export class EditableEntityPresentational extends PureComponent {
    *
    * @private
    * @param {object} initialObject Object to merge the changes into
+   * @param {boolean} completeComplexFields Fields which are themselves an
+   * object should be added completely, this is required by Drupal JSON:API for
+   * properties of complex fields to be updated.
    * @return {object} The changed object
    */
-  _applyChanges(initialObject) {
+  _applyChanges(initialObject, completeComplexFields) {
     const { changes } = this.state;
+    const { data } = this.props;
     return !changes
       ? initialObject
-      : Object.keys(changes).reduce(
-          (prev, curr) => set(prev, curr, changes[curr]),
-          initialObject
+      : Object.keys(changes).reduce((prev, curr) => {
+          const pathArr = curr.split(".");
+          let changeSet = prev;
+          // The completeComplexFields flag was set, this is a complex field and
+          // hasn't been already added to the object we're currently
+          // constructing.
+          if (
+            completeComplexFields &&
+            pathArr.length > 2 &&
+            pathArr[0] === "attributes" &&
+            !get(prev, [pathArr[0], pathArr[1]])
+          ) {
+            // Put the complete complex field into the changeSet.
+            changeSet = set(
+              changeSet,
+              [pathArr[0], pathArr[1]],
+              get(data, [pathArr[0], pathArr[1]])
         );
+  }
+
+          return set(changeSet, curr, changes[curr]);
+        }, initialObject);
   }
 
   render() {
