@@ -6,7 +6,7 @@ export class Input extends PureComponent {
   static propTypes = {
     value: PropTypes.string,
     type: PropTypes.oneOf(["text", "email", "password", "number", "date"]),
-    handleChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
     label: PropTypes.string,
     propPath: PropTypes.string,
@@ -28,14 +28,7 @@ export class Input extends PureComponent {
   }
 
   render() {
-    const {
-      value,
-      type,
-      handleChange,
-      placeholder,
-      label,
-      propPath
-    } = this.props;
+    const { value, type, onChange, placeholder, label, propPath } = this.props;
     return (
       <div className="form-item">
         {label && <label htmlFor={this.name}>{label}</label>}
@@ -45,7 +38,7 @@ export class Input extends PureComponent {
           value={value}
           data-prop-path={propPath}
           placeholder={placeholder}
-          onChange={handleChange}
+          onChange={onChange}
           id={this.name}
         />
       </div>
