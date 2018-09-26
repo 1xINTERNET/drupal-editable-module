@@ -4,21 +4,23 @@ const namespace = "editable";
 
 export const { Drupal, drupalSettings } = window;
 
-export const apiBase = get(
-  drupalSettings,
-  `${namespace}.jsonapi_base`,
-  "jsonapi"
+// Settings are in drupalSettings.editable or editable_settings
+export const settings = get(
+  window,
+  `drupalSettings.${namespace}`,
+  window[`${namespace}_settings`] || {}
 );
 
-export const apiEndpoint = get(
-  drupalSettings,
-  `${namespace}.api_endpoint`,
-  `${window.location.protocol}//${window.location.host}/${apiBase}`
-);
+export const extensionNamespace = window[namespace] || {};
+
+export const apiBase = settings.jsonapi_base || "jsonapi";
+
+export const apiHost =
+  settings.api_host || `${window.location.protocol}//${window.location.host}`;
+
+export const apiEndpoint = settings.api_endpoint || `${apiHost}/${apiBase}`;
 
 export const getExtensionMiddlewares = () =>
-  get(window, `${namespace}.middlewares`, []);
-export const getExtensionReducers = () =>
-  get(window, `${namespace}.reducers`, {});
-export const getExtensionEnhancers = () =>
-  get(window, `${namespace}.enhancers`, []);
+  extensionNamespace.middlewares || [];
+export const getExtensionReducers = () => extensionNamespace.reducers || {};
+export const getExtensionEnhancers = () => extensionNamespace.enhancers || [];
