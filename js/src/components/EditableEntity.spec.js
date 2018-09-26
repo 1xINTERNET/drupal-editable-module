@@ -93,7 +93,7 @@ describe("EditableEntity", () => {
     await component.instance().handleChange({
       target: {
         dataset: {
-          dataPropPath: FIELD_1_ADDRESS
+          propPath: FIELD_1_ADDRESS
         },
         value: CHANGED_FIELD_1_VALUE
       }
