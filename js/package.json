@@ -51,7 +51,7 @@
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "redux-json-api": "^2.0.0",
+    "redux-json-api": "git://github.com/mspae/redux-json-api.git#168-custom-url-construction--lib",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
     "webpack": "^4.19.1",

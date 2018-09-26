@@ -5,7 +5,7 @@ import { updateResource } from "redux-json-api";
 import set from "immutable-set";
 import get from "lodash.get";
 
-import { Drupal } from "../utils";
+import { Drupal, apiEndpointConstructor } from "../utils";
 
 export class EditableEntityPresentational extends PureComponent {
   static propTypes = {
@@ -104,13 +104,15 @@ export class EditableEntityPresentational extends PureComponent {
       if (changes) {
         const entityWithChanges = this._applyChanges(
           {
-          id,
-          type
+            id,
+            type
           },
           true
         );
         await this._setState({ saving: true });
-        await dispatch(updateResource(entityWithChanges));
+        await dispatch(
+          updateResource(entityWithChanges, apiEndpointConstructor)
+        );
       }
       await this._setState({ changes: null, saving: false });
     } catch (e) {
@@ -183,8 +185,8 @@ export class EditableEntityPresentational extends PureComponent {
               changeSet,
               [pathArr[0], pathArr[1]],
               get(data, [pathArr[0], pathArr[1]])
-        );
-  }
+            );
+          }
 
           return set(changeSet, curr, changes[curr]);
         }, initialObject);
