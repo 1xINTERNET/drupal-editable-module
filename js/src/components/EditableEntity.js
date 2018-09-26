@@ -31,21 +31,21 @@ export class EditableEntityPresentational extends PureComponent {
    * @param {any} def The default value to return if nothing was found
    * @return {any} The value at that address or the default
    */
-  getData(propPath, def) {
+  getData = (propPath, def) => {
     const { changes } = this.state;
     const { data } = this.props;
     return get(changes, propPath) || get(data, propPath, def);
-  }
+  };
 
   /**
    * Get the whole entity with changes applied
    *
    * @return {object} The entity with changes applied
    */
-  getAllData() {
+  getAllData = () => {
     const { data } = this.props;
     return this._applyChanges(data);
-  }
+  };
 
   /**
    * Handle a change event from an input element
