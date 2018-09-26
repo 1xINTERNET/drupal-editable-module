@@ -1,6 +1,6 @@
 {
   "name": "@1xinternet/editable-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Provides a shared redux store with entity cache and utility functions and components to decouple Drupal",
   "main": "dist/editable.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "author": "Martin Spencer <martin@1xinternet.de>",
   "license": "GPL-2.0+",
   "devDependencies": {
-    "@1xinternet/editable-webpack-config": "^1.1.1",
+    "@1xinternet/editable-webpack-config": "^1.4.4",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-syntax-export-default-from": "^7.0.0",
@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^9.0.0",
+    "babel-eslint": "^10.0.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
     "cross-env": "^5.2.0",
@@ -39,12 +39,12 @@
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
+    "expose-loader": "^0.7.5",
     "immutable-set": "^2.1.0",
     "jest": "^23.6.0",
     "lodash.get": "^4.4.2",
     "npm-run-all": "^4.1.3",
     "prettier": "^1.14.3",
-    "promise": "^8.0.2",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dev-utils": "^5.0.2",
@@ -55,14 +55,14 @@
     "redux-json-api": "git://github.com/mspae/redux-json-api.git#168-custom-url-construction--lib",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "webpack": "^4.19.1",
+    "webpack": "^4.20.2",
     "webpack-cli": "^3.1.1",
     "whatwg-fetch": "^3.0.0"
   },
   "config": {
     "namespace": "Editable",
     "bundleName": "editable",
-    "isEditableRoot": "true"
+    "isEditableCore": "true"
   },
   "dependencies": {},
   "jest": {
