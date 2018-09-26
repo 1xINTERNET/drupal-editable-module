@@ -8,6 +8,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { reducer as api, setAxiosConfig } from "redux-json-api";
 import {
   apiEndpoint,
+  apiHost,
   getExtensionReducers,
   getExtensionMiddlewares,
   getExtensionEnhancers
@@ -22,15 +23,23 @@ export const createStore = () => {
   const store = createReduxStore(
     reducer,
     composeWithDevTools(
-    applyMiddleware(thunk, ...getExtensionMiddlewares()),
-    ...getExtensionEnhancers()
+      applyMiddleware(thunk, ...getExtensionMiddlewares()),
+      ...getExtensionEnhancers()
     )
   );
 
-  store.dispatch(
-    setAxiosConfig({
-      baseURL: apiEndpoint
-    })
-  );
+  fetch(`${apiHost}/rest/session/token`)
+    .then(res => res.text())
+    .then(token =>
+      store.dispatch(
+        setAxiosConfig({
+          baseURL: apiEndpoint,
+          headers: {
+            "X-CSRF-Token": token
+          }
+        })
+      )
+    );
+
   return store;
 };
