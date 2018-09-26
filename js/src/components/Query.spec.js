@@ -30,6 +30,7 @@ describe("Query", () => {
         type={TYPE_PROP}
         dispatch={dispatchFn}
         uuid={UUID_PROP}
+        apiIsReady
       >
         {() => null}
       </QueryPresentational>

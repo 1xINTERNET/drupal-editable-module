@@ -1,9 +1,9 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import { readEndpoint } from "redux-json-api";
-
+import { connect } from "react-redux";
 import { DataSet } from ".";
+import { selectApiIsReady } from "../selectors";
 
 export class QueryPresentational extends PureComponent {
   static propTypes = {
@@ -14,11 +14,13 @@ export class QueryPresentational extends PureComponent {
     uuid: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string)
-    ])
+    ]),
+    apiIsReady: PropTypes.bool
   };
 
   static defaultProps = {
-    uuid: null
+    uuid: null,
+    apiIsReady: false
   };
 
   state = {
@@ -27,7 +29,17 @@ export class QueryPresentational extends PureComponent {
   };
 
   componentDidMount() {
-    this.fetchData();
+    const { apiIsReady } = this.props;
+    if (apiIsReady) {
+      this.fetchData();
+    }
+  }
+
+  componentDidUpdate({ apiIsReady: apiWasReady }) {
+    const { apiIsReady } = this.props;
+    if (!apiWasReady && apiIsReady) {
+      this.fetchData();
+    }
   }
 
   /**
@@ -79,4 +91,6 @@ export class QueryPresentational extends PureComponent {
   }
 }
 
-export const Query = connect()(QueryPresentational);
+export const Query = connect(state => ({
+  apiIsReady: selectApiIsReady(state)
+}))(QueryPresentational);
