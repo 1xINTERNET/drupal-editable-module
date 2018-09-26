@@ -74,7 +74,7 @@ export class EditableEntityPresentational extends PureComponent {
    * @return {Promise<void>} Resolved when the entity was saved
    */
   handleChangeAndSave = async evt =>
-    this.handleChange(evt).then(Drupal.debounce(this.save, 500));
+    this.handleChange(evt).then(Drupal.debounce(this.save, 1000));
 
   /**
    * Change the entity without saving it
