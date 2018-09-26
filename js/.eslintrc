@@ -12,6 +12,7 @@
     "global-require": 0,
     "import/prefer-default-export": 0,
     "no-nested-ternary": 0,
-    "react/jsx-filename-extension": 0
+    "react/jsx-filename-extension": 0,
+    "import/no-webpack-loader-syntax": 0
   }
 }
