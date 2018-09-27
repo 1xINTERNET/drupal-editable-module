@@ -7,16 +7,17 @@ import * as reduxJsonApi from "redux-json-api";
 
 import { EditableEntityPresentational } from ".";
 
-const updateEndpointSpy = jest
-  .spyOn(reduxJsonApi, "updateResource")
-  .mockImplementation(k => k);
-
 const dispatchFn = jest.fn(() => null);
 const renderFn = jest.fn();
 
 const BUNDLE_PROP = "bundle";
 const TYPE_PROP = "type";
 const UUID_PROP = "uuid";
+
+const ENTITY_BASICS = {
+  id: UUID_PROP,
+  type: `${TYPE_PROP}--${BUNDLE_PROP}`
+};
 
 const FIELD_1_ADDRESS = "attributes.field";
 const ORIGINAL_FIELD_1_VALUE = "original field value";
@@ -27,8 +28,7 @@ const ORIGINAL_FIELD_2_VALUE = "original field 2 value";
 const CHANGED_FIELD_2_VALUE = "new field 2 value";
 
 const ENTITY = {
-  id: UUID_PROP,
-  type: `${TYPE_PROP}--${BUNDLE_PROP}`,
+  ...ENTITY_BASICS,
   attributes: {
     field: ORIGINAL_FIELD_1_VALUE,
     otherField: ORIGINAL_FIELD_2_VALUE
@@ -37,14 +37,22 @@ const ENTITY = {
 
 describe("EditableEntity", () => {
   let component;
+  let updateEndpointSpy;
 
   beforeEach(() => {
-    updateEndpointSpy.mockClear();
+    updateEndpointSpy = jest
+      .spyOn(reduxJsonApi, "updateResource")
+      .mockImplementation(k => k);
+
     component = shallow(
       <EditableEntityPresentational data={ENTITY} dispatch={dispatchFn}>
         {renderFn}
       </EditableEntityPresentational>
     );
+  });
+
+  afterEach(() => {
+    updateEndpointSpy.mockClear();
   });
 
   it("should call the render function correctly", () => {
@@ -152,8 +160,20 @@ describe("EditableEntity", () => {
       attributes: {
         field: CHANGED_FIELD_1_VALUE
       },
-      id: UUID_PROP,
-      type: `${TYPE_PROP}--${BUNDLE_PROP}`
+      ...ENTITY_BASICS
     });
+  });
+
+  it("should set the correct saving state when saving", async () => {
+    updateEndpointSpy = jest
+      .spyOn(reduxJsonApi, "updateResource")
+      .mockImplementation(() => new Promise(resolve => setTimeout(resolve, 0)));
+
+    await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
+    component.instance().save();
+    expect(component.state("changes")).toEqual({
+      [FIELD_1_ADDRESS]: CHANGED_FIELD_1_VALUE
+    });
+    await Promise.resolve();
   });
 });
