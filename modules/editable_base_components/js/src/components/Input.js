@@ -79,7 +79,9 @@ export class Input extends PureComponent {
     return (
       <div
         className={cx(
-          "form-item editable--form-item editable--form-item--input",
+          "form-item",
+          "editable--form-item",
+          "editable--form-item--input",
           className
         )}
       >
@@ -100,7 +102,9 @@ export class Input extends PureComponent {
         >
           <input
             className={cx(
-              "form-text editable--form-text editable--form-text--input",
+              "form-text",
+              "editable--form-text",
+              "editable--form-text--input",
               inputClassName
             )}
             type={type}
