@@ -27,11 +27,21 @@ const FIELD_2_ADDRESS = "attributes.otherField";
 const ORIGINAL_FIELD_2_VALUE = "original field 2 value";
 const CHANGED_FIELD_2_VALUE = "new field 2 value";
 
+const FIELD_3_1_ADDRESS = "attributes.complexField.subField";
+const ORIGINAL_FIELD_3_1_VALUE = "original field 3.1 value";
+const CHANGED_FIELD_3_1_VALUE = "changed field 3.1 value";
+const ORIGINAL_FIELD_3_2_VALUE = "original field 3.2 value";
+const ORIGINAL_FIELD_3_VALUE = {
+  subField: ORIGINAL_FIELD_3_1_VALUE,
+  otherSubField: ORIGINAL_FIELD_3_2_VALUE
+};
+
 const ENTITY = {
   ...ENTITY_BASICS,
   attributes: {
     field: ORIGINAL_FIELD_1_VALUE,
-    otherField: ORIGINAL_FIELD_2_VALUE
+    otherField: ORIGINAL_FIELD_2_VALUE,
+    complexField: ORIGINAL_FIELD_3_VALUE
   }
 };
 
@@ -177,6 +187,22 @@ describe("EditableEntity", () => {
       [FIELD_1_ADDRESS]: CHANGED_FIELD_1_VALUE
     });
     await Promise.resolve();
+  });
+
+  it("should call updateEndpoint with a payload including complete complex fields", async () => {
+    await component
+      .instance()
+      .change(FIELD_3_1_ADDRESS, CHANGED_FIELD_3_1_VALUE);
+    await component.instance().save();
+    expect(updateEndpointSpy.mock.calls[0][0]).toEqual({
+      attributes: {
+        complexField: {
+          subField: CHANGED_FIELD_3_1_VALUE,
+          otherSubField: ORIGINAL_FIELD_3_2_VALUE
+        }
+      },
+      ...ENTITY_BASICS
+    });
   });
 
   it("should set an error state if there was an error saving", async () => {
