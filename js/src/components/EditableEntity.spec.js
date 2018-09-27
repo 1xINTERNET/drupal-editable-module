@@ -63,7 +63,8 @@ describe("EditableEntity", () => {
       handleChangeAndSave,
       getData,
       getAllData,
-      saving
+      saving,
+      error
     } = renderFn.mock.calls[0][0];
     expect(change).toBeDefined();
     expect(save).toBeDefined();
@@ -72,6 +73,7 @@ describe("EditableEntity", () => {
     expect(getData).toBeDefined();
     expect(getAllData).toBeDefined();
     expect(saving).toBe(false);
+    expect(error).toBe(null);
   });
 
   it("should return the correct data when using getData", async () => {
@@ -175,5 +177,21 @@ describe("EditableEntity", () => {
       [FIELD_1_ADDRESS]: CHANGED_FIELD_1_VALUE
     });
     await Promise.resolve();
+  });
+
+  it("should set an error state if there was an error saving", async () => {
+    /* eslint-disable no-console */
+    const _consoleerror = console.error;
+    console.error = jest.fn();
+    updateEndpointSpy = jest
+      .spyOn(reduxJsonApi, "updateResource")
+      .mockImplementation(() => {
+        throw new Error("Failed!");
+      });
+    await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
+    await component.instance().save();
+    expect(component.state("error")).toBe("There was an error saving!");
+    console.error = _consoleerror;
+    /* eslint-enable no-console */
   });
 });
