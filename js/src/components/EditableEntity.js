@@ -116,6 +116,7 @@ export class EditableEntityPresentational extends PureComponent {
 
     try {
       if (changes) {
+        await this._setState({ saving: Object.keys(changes) });
         const entityWithChanges = this._applyChanges(
           {
             id,
@@ -123,7 +124,6 @@ export class EditableEntityPresentational extends PureComponent {
           },
           true
         );
-        await this._setState({ saving: true });
         await dispatch(
           updateResource(entityWithChanges, apiEndpointConstructor)
         );
