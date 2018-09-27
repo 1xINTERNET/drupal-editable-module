@@ -21,7 +21,7 @@ export class EditableEntityPresentational extends PureComponent {
 
   static defaultProps = { data: null };
 
-  state = { changes: null, saving: false };
+  state = { changes: null, saving: false, error: null };
 
   /**
    * Cached version of a debounced save function
@@ -131,8 +131,11 @@ export class EditableEntityPresentational extends PureComponent {
       await this._setState({ changes: null, saving: false });
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(e);
-      await this._setState({ saving: false });
+      console.error(e);
+      await this._setState({
+        saving: false,
+        error: "There was an error saving!"
+      });
     }
   };
 
@@ -208,7 +211,7 @@ export class EditableEntityPresentational extends PureComponent {
 
   render() {
     const { children } = this.props;
-    const { saving } = this.state;
+    const { saving, error } = this.state;
 
     return children({
       change: this.change,
@@ -217,7 +220,8 @@ export class EditableEntityPresentational extends PureComponent {
       handleChangeAndSave: this.handleChangeAndSave,
       getData: this.getData,
       getAllData: this.getAllData,
-      saving
+      saving,
+      error
     });
   }
 }
