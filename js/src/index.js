@@ -17,7 +17,7 @@ export { default as set } from "immutable-set";
 export { default as debounce } from "lodash.debounce";
 export { default as cx } from "classnames";
 export { connect, Provider } from "react-redux";
-export { css } from "emotion";
+export { css, keyframes } from "emotion";
 export { createSelector } from "reselect";
 export {
   createResource,
