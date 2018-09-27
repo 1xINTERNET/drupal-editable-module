@@ -15,6 +15,7 @@
   "author": "Martin Spencer <martin@1xinternet.de>",
   "license": "GPL-2.0+",
   "devDependencies": {
+    "@1xinternet/editable-core": "^0.4.0",
     "@1xinternet/editable-webpack-config": "^1.0.1",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
