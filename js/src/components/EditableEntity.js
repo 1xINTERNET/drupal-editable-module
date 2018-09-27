@@ -4,8 +4,9 @@ import { connect } from "react-redux";
 import { updateResource } from "redux-json-api";
 import set from "immutable-set";
 import get from "lodash.get";
+import debounce from "lodash.debounce";
 
-import { Drupal, apiEndpointConstructor } from "../utils";
+import { apiEndpointConstructor } from "../utils";
 
 export class EditableEntityPresentational extends PureComponent {
   static propTypes = {
@@ -21,6 +22,19 @@ export class EditableEntityPresentational extends PureComponent {
   static defaultProps = { data: null };
 
   state = { changes: null, saving: false };
+
+  /**
+   * Cached version of a debounced save function
+   *
+   * @private
+   */
+  debouncedSave = null;
+
+  constructor(props) {
+    super(props);
+
+    this.debouncedSave = debounce(this.save, 1000);
+  }
 
   /**
    * Get the data at a specific path. This method tries to resolve the path to
@@ -74,7 +88,7 @@ export class EditableEntityPresentational extends PureComponent {
    * @return {Promise<void>} Resolved when the entity was saved
    */
   handleChangeAndSave = async evt =>
-    this.handleChange(evt).then(Drupal.debounce(this.save, 1000));
+    this.handleChange(evt).then(this.debouncedSave);
 
   /**
    * Change the entity without saving it
