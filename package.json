@@ -1,0 +1,26 @@
+{
+  "name": "editable",
+  "version": "1.0.0",
+  "description": "This contrib module provides a JS library which can be used to decouple parts of Drupal with React. (it does nothing on its own)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm install -g --prefix ./js @1xinternet/editable-core"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1xINTERNET/editable.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1xINTERNET/editable/issues"
+  },
+  "homepage": "https://github.com/1xINTERNET/editable#readme",
+  "devDependencies": {
+    "react-docgen": "^2.21.0"
+  }
+}

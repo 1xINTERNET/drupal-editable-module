@@ -1,3 +1,16 @@
+# Editable (WIP)
+
+> Editable is a family of Drupal modules which can be used to progressively decouple Drupal.\*
+
+(\* The JS exposed by these modules can be used outside of a Drupal context with a module bundler but this is not yet tested or documented yet)
+
+Check out these links for more information:
+
+- [Getting started](docs/getting-started.md)
+- [Utilities](docs/utilities.md)
+- [Components](docs/components.md)
+- [Technical Explanation](docs/technical-explanation.md)
+
 # Improved Contrib UI Core [WIP!]
 
 This contrib module provides a JS library which can be used to decouple parts of Drupal with React. (it does nothing on its own)
@@ -84,23 +97,20 @@ Loading an entity and providing an input field with the data which saves any cha
 
 ```jsx
 <Query bundle="node" type="page" uuid="ee97df22-519f-43bf-95e0-294961dc8d23">
-    {({loading, error, data}) => {
-      <div>
-        Data without changes: {JSON.stringify(data)}
-        <EditableEntity data={data}>
-          {({ handleChangeAndSave, dataWithChanges }) => {
-            <input
-              type="text"
-              onChange={handleChangeAndSave}
-              data-prop-path="attributes.title"
-              value={
-                loading
-                ? "Loading..."
-                : dataWithChanges.attributes.title
-              } />
-          }}
-        </EditableEntity>
-      </div>
-    }}
+  {({ loading, error, data }) => {
+    <div>
+      Data without changes: {JSON.stringify(data)}
+      <EditableEntity data={data}>
+        {({ handleChangeAndSave, dataWithChanges }) => {
+          <input
+            type="text"
+            onChange={handleChangeAndSave}
+            data-prop-path="attributes.title"
+            value={loading ? "Loading..." : dataWithChanges.attributes.title}
+          />;
+        }}
+      </EditableEntity>
+    </div>;
+  }}
 </Query>
 ```
