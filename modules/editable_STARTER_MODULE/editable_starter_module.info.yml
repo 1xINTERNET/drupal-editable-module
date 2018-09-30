@@ -1,0 +1,7 @@
+name: Editable STARTER MODULE
+type: module
+description: "A starter submodule using the Drupal editable framework"
+package: Editable
+core: 8.x
+dependencies:
+  - editable

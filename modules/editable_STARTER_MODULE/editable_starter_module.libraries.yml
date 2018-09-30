@@ -1,0 +1,13 @@
+production:
+  version: VERSION
+  js:
+    js/dist/editable_starter_module.js: {}
+  dependencies:
+    - editable/production
+
+development:
+  version: VERSION
+  js:
+    js/dist/editable_starter_module.dev.js: {}
+  dependencies:
+    - editable/development
