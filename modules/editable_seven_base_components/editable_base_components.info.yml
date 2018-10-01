@@ -1,4 +1,4 @@
-name: Editable Base Components
+name: Editable Seven Base Components
 type: module
 description: "Provides commonly used components to decouple parts of the Drupal 8 admin UI"
 package: Editable

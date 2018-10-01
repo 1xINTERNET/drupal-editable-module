@@ -1,15 +1,20 @@
 production:
   version: VERSION
   js:
-    js/dist/editable.js: {}
+    vendor/npm-asset/react/umd/react.production.min.js: {}
+    vendor/npm-asset/react-dom/umd/react-dom.production.min.js: {}
+    vendor/npm-asset/drupal-editable--core/dist/lib.js: {}
+    js/dist/lib.js: {}
   dependencies:
     - core/drupalSettings
-    - core/drupal.debounce
 
 development:
   version: VERSION
   js:
-    js/dist/editable.dev.js: {}
+    vendor/npm-asset/react/umd/react.development.js: {}
+    vendor/npm-asset/prop-types/prop-types.min.js: {}
+    vendor/npm-asset/react-dom/umd/react-dom.development.js: {}
+    vendor/npm-asset/drupal-editable--core/dist/lib.dev.js: {}
+    js/dist/lib.dev.js: {}
   dependencies:
     - core/drupalSettings
-    - core/drupal.debounce

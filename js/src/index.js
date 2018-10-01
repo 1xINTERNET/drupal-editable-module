@@ -1,30 +1,28 @@
-import "./polyfills";
+import { EditableRegistry } from "./editableRegistry";
 
-/* eslint-disable import/no-unresolved */
-import "expose-loader?React!react";
-import "expose-loader?ReactDOM!react-dom";
-import "expose-loader?PropTypes!prop-types";
-/* eslint-enable import/no-unresolved */
+(($, window, Drupal) => {
+  // Instantiate the registry, this will be used by other modules to attach
+  // their own middlewares, reducers etc.
+  window.Editable_Registry = new EditableRegistry();
+  const domain = `${window.location.protocol}//${window.location.host}`;
 
-// Create and export the shared redux store.
-import { createStore } from "./utils";
+  Drupal.behaviors.editable_core_init = {
+    attach(context) {
+      // Only do this on the root doc ready call.
+      if (context !== document) {
+        return;
+      }
 
-export const store = createStore();
-
-// Alias and export other utility functions.
-export { default as get } from "lodash.get";
-export { default as set } from "immutable-set";
-export { default as debounce } from "lodash.debounce";
-export { default as cx } from "classnames";
-export { connect, Provider } from "react-redux";
-export { css, keyframes } from "emotion";
-export { createSelector } from "reselect";
-export {
-  createResource,
-  readEndpoint,
-  updateResource,
-  deleteResource,
-  hydrateStore
-} from "redux-json-api";
-export { DataSet, Query, EditableEntity } from "./components";
-export { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";
+      $(context)
+        .once("initialise-editable-core")
+        .each(() => {
+          // Initialize the actual store.
+          // @TODO make this settable via drupalSettings
+          window.Editable_Registry.initialize({
+            apiEndpoint: `${domain}/jsonapi`,
+            csrfTokenEndpoint: `${domain}/session/token`
+          });
+        });
+    }
+  };
+})(jQuery, window, Drupal);

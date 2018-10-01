@@ -3,6 +3,7 @@
 namespace Drupal\editable_starter_module\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Component\Serialization\Json;
+use Drupal\node\Entity\Node;
 
 /**
  * Provides a 'Editable Starter' Block.
@@ -18,12 +19,10 @@ class EditableStarterBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    // We get the current user id
-    $current_user = \Drupal::currentUser();
-    // … load it as an entity
-    $user = \Drupal\user\Entity\User::load($current_user->id());
+    $nid = \Drupal::routeMatch()->getParameter('node')->id();
+    $entity = Node::load($nid);
     // … serialize it using the jsonapi service to a response we would get from the API
-    $entityFromJsonApi = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($user);
+    $entityFromJsonApi = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
     // … and read the correct type/bundle and uuid we need to query the API correctly.
     $entityData = $entityFromJsonApi['data'];
     $typeArray = mb_split('--', $entityData['type']);

@@ -1,13 +1,13 @@
 production:
   version: VERSION
   js:
-    js/dist/editable_starter_module.js: {}
+    js/dist/lib.js: {}
   dependencies:
     - editable/production
 
 development:
   version: VERSION
   js:
-    js/dist/editable_starter_module.dev.js: {}
+    js/dist/lib.dev.js: {}
   dependencies:
     - editable/development

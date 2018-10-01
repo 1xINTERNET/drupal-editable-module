@@ -1,81 +1,50 @@
 {
-  "name": "@1xinternet/editable-core",
-  "version": "0.5.0",
-  "description": "Provides a shared redux store with entity cache and utility functions and components to decouple Drupal",
-  "main": "dist/editable.js",
+  "name": "editable_core_behaviour",
+  "version": "1.2.0",
+  "description": "Initialises the editable core library and allows other modules to attach middlewares, reducers and enhancers to the central store",
+  "main": "dist/lib.js",
   "scripts": {
     "build": "npm run clean && run-p build:dev build:prod",
-    "build:dev": "cross-env NODE_ENV=development webpack --config ./node_modules/@1xinternet/editable-webpack-config",
-    "build:prod": "cross-env NODE_ENV=production webpack --config ./node_modules/@1xinternet/editable-webpack-config",
+    "build:dev": "cross-env NODE_ENV=development webpack --config ./node_modules/@drupal-editable/webpack-config",
+    "build:prod": "cross-env NODE_ENV=production webpack --config ./node_modules/@drupal-editable/webpack-config",
     "clean": "rimraf dist",
     "lint": "eslint src",
-    "format": "prettier --write './src/**/*.js'",
-    "test": "jest"
+    "format": "prettier --write './src/**/*.js'"
   },
   "author": "Martin Spencer <martin@1xinternet.de>",
   "license": "GPL-2.0+",
   "devDependencies": {
-    "@1xinternet/editable-webpack-config": "^1.4.4",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-syntax-export-default-from": "^7.0.0",
-    "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
+    "@drupal-editable/core": "^0.1.1",
+    "@drupal-editable/webpack-config": "*",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.0.0",
+    "babel-eslint": "^9.0.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
-    "classnames": "^2.2.6",
     "cross-env": "^5.2.0",
-    "emotion": "^9.2.10",
-    "enzyme": "^3.6.0",
-    "enzyme-adapter-react-16": "^1.5.0",
-    "enzyme-to-json": "^3.3.4",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-loader": "^2.1.1",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-loader": "^2.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
-    "expose-loader": "^0.7.5",
-    "immutable-set": "^2.1.0",
-    "jest": "^23.6.0",
-    "lodash.debounce": "^4.0.8",
-    "lodash.get": "^4.4.2",
     "npm-run-all": "^4.1.3",
-    "prettier": "^1.14.3",
+    "prettier": "^1.14.2",
     "prop-types": "^15.6.2",
-    "react": "^16.5.2",
+    "react": "^16.5.1",
     "react-dev-utils": "^5.0.2",
-    "react-dom": "^16.5.2",
-    "react-redux": "^5.0.7",
-    "redux": "^4.0.0",
-    "redux-devtools-extension": "^2.13.5",
-    "redux-json-api": "git://github.com/mspae/redux-json-api.git#168-custom-url-construction--lib",
-    "redux-thunk": "^2.3.0",
-    "reselect": "^3.0.1",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.1",
-    "whatwg-fetch": "^3.0.0"
+    "react-dom": "^16.5.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1"
   },
   "config": {
-    "namespace": "Editable",
-    "bundleName": "editable",
-    "isEditableCore": "true"
+    "namespace": "Editable_Core_Behaviour"
   },
-  "dependencies": {},
-  "jest": {
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
-    "setupFiles": [
-      "./src/setupTests.js"
-    ],
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    }
-  }
+  "dependencies": {}
 }
