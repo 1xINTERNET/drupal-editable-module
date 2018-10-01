@@ -27,6 +27,9 @@ export class EditableRegistry {
   }
 
   addInitHook(hook) {
+    if (this.initialized) {
+      return hook(this.store);
+    }
     this.initHooks.add(hook);
   }
 
