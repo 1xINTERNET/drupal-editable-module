@@ -37,6 +37,7 @@ export class EditableRegistry {
       enhancers: this.enhancers,
       ...settings
     });
+    this.initialized = true;
     this.callInitHooks();
   }
 }
