@@ -13,16 +13,10 @@ import { EditableRegistry } from "./editableRegistry";
         return;
       }
 
-      $(context)
-        .once("initialise-editable-core")
-        .each(() => {
-          // Initialize the actual store.
-          // @TODO make this settable via drupalSettings
-          window.Editable_Registry.initialize({
-            apiEndpoint: `${domain}/jsonapi`,
-            csrfTokenEndpoint: `${domain}/session/token`
-          });
-        });
+      window.Editable_Registry.initialize({
+        apiEndpoint: `${domain}/jsonapi`,
+        csrfTokenEndpoint: `${domain}/session/token`
+      });
     }
   };
 })(jQuery, window, Drupal);
