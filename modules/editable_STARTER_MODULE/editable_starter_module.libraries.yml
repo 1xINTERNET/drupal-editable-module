@@ -1,0 +1,13 @@
+production:
+  version: VERSION
+  js:
+    js/dist/lib.js: {}
+  dependencies:
+    - editable/production
+
+development:
+  version: VERSION
+  js:
+    js/dist/lib.dev.js: {}
+  dependencies:
+    - editable/development

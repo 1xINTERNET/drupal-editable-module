@@ -3,5 +3,29 @@
   "type": "drupal-module",
   "description": ".",
   "homepage": "http://drupal.org/project/editable",
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0+",
+  "require": {
+    "oomphinc/composer-installers-extender": "^1.1",
+    "npm-asset/drupal-editable--core": "*",
+    "npm-asset/drupal-editable--seven-base-components": "*",
+    "npm-asset/react": "^16.5.2",
+    "npm-asset/react-dom": "^16.5.2",
+    "npm-asset/prop-types": "^15.6.2"
+  },
+  "extra": {
+    "installer-types": [
+      "npm-asset"
+    ],
+    "installer-paths": {
+      "vendor/npm-asset/{$name}/": [
+        "type:npm-asset"
+      ]
+    }
+  },
+  "repositories": {
+    "asset-packagist": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  }
 }
