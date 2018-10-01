@@ -11,14 +11,27 @@ export class EditableRegistry {
   }
 
   addMiddleWare(middleware) {
+    if (this.initialized) {
+      throw new Error(
+        "Cannot add middleware, the store was already initialized!"
+      );
+    }
     this.middlewares.add(middleware);
   }
 
   addEnhancer(enhancer) {
+    if (this.initialized) {
+      throw new Error(
+        "Cannot add enhancer, the store was already initialized!"
+      );
+    }
     this.enhancers.add(enhancer);
   }
 
   addReducer(key, reducer) {
+    if (this.initialized) {
+      throw new Error("Cannot add reducer, the store was already initialized!");
+    }
     this.reducers[key] = reducer;
   }
 
