@@ -1,14 +1,13 @@
 production:
   version: VERSION
   js:
-    ../vendor/npm-asset/drupal-editable--seven-base-components/dist/lib.js: {}
+    ../../vendor/npm-asset/drupal-editable--seven-base-components/dist/lib.js: {}
   dependencies:
     - editable/production
 
 development:
   version: VERSION
   js:
-    ../vendor/npm-asset/drupal-editable--seven-base-components/dist/lib.dev.js:
-      {}
+    ../../vendor/npm-asset/drupal-editable--seven-base-components/dist/lib.dev.js : {}
   dependencies:
     - editable/development
