@@ -1,9 +1,9 @@
 production:
   version: VERSION
   js:
-    vendor/npm-asset/react/umd/react.production.min.js: {}
-    vendor/npm-asset/react-dom/umd/react-dom.production.min.js: {}
-    vendor/npm-asset/drupal-editable--core/dist/lib.js: {}
+    /libraries/react/umd/react.production.min.js: {}
+    /libraries/react-dom/umd/react-dom.production.min.js: {}
+    /libraries/drupal-editable--core/dist/lib.js: {}
     js/dist/lib.js: {}
   dependencies:
     - core/drupalSettings
@@ -11,10 +11,10 @@ production:
 development:
   version: VERSION
   js:
-    vendor/npm-asset/react/umd/react.development.js: {}
-    vendor/npm-asset/prop-types/prop-types.min.js: {}
-    vendor/npm-asset/react-dom/umd/react-dom.development.js: {}
-    vendor/npm-asset/drupal-editable--core/dist/lib.dev.js: {}
+    /libraries/react/umd/react.development.js: {}
+    /libraries/prop-types/prop-types.min.js: {}
+    /libraries/react-dom/umd/react-dom.development.js: {}
+    /libraries/drupal-editable--core/dist/lib.dev.js: {}
     js/dist/lib.dev.js: {}
   dependencies:
     - core/drupalSettings
