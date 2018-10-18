@@ -2,6 +2,7 @@ production:
   version: VERSION
   js:
     /libraries/react/umd/react.production.min.js: {}
+    /libraries/prop-types/prop-types.min.js: {}
     /libraries/react-dom/umd/react-dom.production.min.js: {}
     /libraries/drupal-editable--core/dist/lib.js: {}
     js/dist/lib.js: {}
