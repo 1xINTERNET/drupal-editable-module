@@ -11,21 +11,5 @@
     "npm-asset/react": "^16.5.2",
     "npm-asset/react-dom": "^16.5.2",
     "npm-asset/prop-types": "^15.6.2"
-  },
-  "extra": {
-    "installer-types": [
-      "npm-asset"
-    ],
-    "installer-paths": {
-      "vendor/npm-asset/{$name}/": [
-        "type:npm-asset"
-      ]
-    }
-  },
-  "repositories": {
-    "asset-packagist": {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
   }
 }
