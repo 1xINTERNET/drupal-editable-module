@@ -4,4 +4,4 @@ description: "Provides commonly used components to decouple parts of the Drupal 
 package: Editable
 core: 8.x
 dependencies:
-  - editable
+  - editable:editable
