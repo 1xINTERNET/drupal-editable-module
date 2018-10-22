@@ -15,17 +15,19 @@
   "author": "Martin Spencer <martin@1xinternet.de>",
   "license": "GPL-2.0+",
   "devDependencies": {
-    "@drupal-editable/core": "*",
-    "@drupal-editable/webpack-config": "*",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-syntax-export-default-from": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@drupal-editable/core": "^0.4.0",
+    "@drupal-editable/webpack-config": "^0.4.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.19",
     "cross-env": "^5.2.0",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.5.0",
@@ -50,7 +52,7 @@
   },
   "config": {
     "namespace": "EditableStarterModule",
-    "bundleName": "editable_starter_module"
+    "bundleName": "editable-starter-module"
   },
   "dependencies": {},
   "jest": {

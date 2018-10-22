@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import {
   Query,
   EditableEntity,
+  EditableEntityForm,
   Provider,
   get,
   css
@@ -46,7 +47,7 @@ const ExampleComponent = props => (
                 EditableEntity will handle saving the data.
               */}
               <EditableEntity data={data}>
-                {({ getData, handleChange, save, saving }) => (
+                {({ getData, change, save, saving }) => (
                   <div>
                     {/*
                       Within EditableEntity we need to use the getData and
@@ -62,17 +63,21 @@ const ExampleComponent = props => (
                       The currently locally cached change is:
                       {` ${getData("attributes.title")}`}
                     </p>
-                    {/*
-                      handleChange uses the data-prop-path attribute to
-                      determine which field was changed. This is just syntactic
-                      sugar around the change function.
-                    */}
-                    <input
-                      type="text"
-                      value={getData("attributes.title")}
-                      data-prop-path="attributes.title"
-                      onChange={handleChange}
-                    />
+                    <EditableEntityForm save={save} change={change}>
+                      {({ handleChange }) => (
+                        /*
+                          handleChange uses the data-prop-path attribute to
+                          determine which field was changed. This is just syntactic
+                          sugar around the change function.
+                        */
+                        <input
+                          type="text"
+                          value={getData("attributes.title")}
+                          data-prop-path="attributes.title"
+                          onChange={handleChange}
+                        />
+                      )}
+                    </EditableEntityForm>
                     <button type="submit" onClick={save}>
                       Save!
                     </button>

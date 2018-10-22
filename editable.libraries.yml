@@ -4,8 +4,8 @@ production:
     /libraries/react/umd/react.production.min.js: {}
     /libraries/prop-types/prop-types.min.js: {}
     /libraries/react-dom/umd/react-dom.production.min.js: {}
-    /libraries/drupal-editable--core/dist/lib.js: {}
-    js/dist/lib.js: {}
+    /libraries/drupal-editable--core/dist/editable-core.js: {}
+    js/dist/editable-core-behavior.js: {}
   dependencies:
     - core/drupalSettings
 
@@ -15,7 +15,7 @@ development:
     /libraries/react/umd/react.development.js: {}
     /libraries/prop-types/prop-types.min.js: {}
     /libraries/react-dom/umd/react-dom.development.js: {}
-    /libraries/drupal-editable--core/dist/lib.dev.js: {}
-    js/dist/lib.dev.js: {}
+    /libraries/drupal-editable--core/dist/editable-core.dev.js: {}
+    js/dist/editable-core-behavior.dev.js: {}
   dependencies:
     - core/drupalSettings
