@@ -5,6 +5,8 @@
  * Contains hooks and functions for editable_view_mode module.
  */
 
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -13,4 +15,26 @@ use Drupal\Core\Form\FormStateInterface;
 function editable_view_mode_form_entity_view_display_edit_form_alter(&$form, FormStateInterface $form_state) {
   $form_state->loadInclude('editable_view_mode', 'inc', 'includes/field_ui');
   editable_view_mode_admin_ui($form, $form_state);
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
+  $status = $display->getThirdPartySetting('editable_view_mode', 'enabled');
+  if ($status && $entity->access('update')) {
+    // Attach the libraries for editable interface.
+    $build['#attached']['library'][] = 'editable/production';
+    // Provide the JSON API serialized entity into drupalSettings.
+    $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
+    $build['#attached']['drupalSettings']['editable']['entities'][$entity->getEntityTypeId() . ':' . $entity->id()] = $serialized_entity;
+    // Provide serialized field data.
+    $entityManager = \Drupal::service('entity_field.manager');
+    $fields = $entityManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
+    foreach ($fields as $field) {
+      $serialized_fields[$field->getName()] = $field->toArray();
+    }
+    $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity->getEntityTypeId()][$entity->bundle()] = $serialized_fields;
+  }
 }
