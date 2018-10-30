@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Contains hooks and functions for editable_view_mode module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function editable_view_mode_form_entity_view_display_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $form_state->loadInclude('editable_view_mode', 'inc', 'includes/field_ui');
+  editable_view_mode_admin_ui($form, $form_state);
+}
