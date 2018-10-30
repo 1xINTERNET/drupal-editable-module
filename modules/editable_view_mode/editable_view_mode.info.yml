@@ -1,0 +1,7 @@
+name: Editable View Mode
+type: module
+description: "Provides opportunity to enable editable per view mode"
+package: Editable
+core: 8.x
+dependencies:
+  - editable:editable
