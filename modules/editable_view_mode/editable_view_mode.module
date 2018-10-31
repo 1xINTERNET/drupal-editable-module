@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Contains hooks and functions for editable_view_mode module.
+ */
+
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function editable_view_mode_form_entity_view_display_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $form_state->loadInclude('editable_view_mode', 'inc', 'includes/field_ui');
+  editable_view_mode_admin_ui($form, $form_state);
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
+  $status = $display->getThirdPartySetting('editable_view_mode', 'enabled');
+  if ($status && $entity->access('update')) {
+    // Attach the libraries for editable interface.
+    $build['#attached']['library'][] = 'editable/production';
+    // Provide the JSON API serialized entity into drupalSettings.
+    $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
+    $build['#attached']['drupalSettings']['editable']['entities'][$entity->getEntityTypeId() . ':' . $entity->id()] = $serialized_entity;
+    // Provide serialized field data.
+    $serialized_fields = [];
+    $entityManager = \Drupal::service('entity_field.manager');
+    $fields = $entityManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
+    foreach ($fields as $field) {
+      $fieldDefinition = [];
+      if (method_exists($field, 'toArray')) {
+        $fieldDefinition += $field->toArray();
+      }
+      if (method_exists($field, 'getSchema')) {
+        $schema = $field->getSchema();
+        $fieldDefinition['schema'] = $schema['columns']['value'];
+      }
+      $serialized_fields[$field->getName()] = $fieldDefinition;
+    }
+    $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity->getEntityTypeId()][$entity->bundle()] = $serialized_fields;
+    $build['#attributes']['data-editable-entity-id'] = $entity->getEntityTypeId() . '/' . $entity->id();
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function editable_view_mode_preprocess_field(&$variables) {
+  // Add editable attributes to the field rendered arrays.
+  $variables['#cache']['contexts'][] = 'user.permissions';
+  $element = $variables['element'];
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+  $entity = $element['#object'];
+  // If there is no access to update entity or entity is not in the
+  // latest revision - exit.
+  if (!$entity->access('update') || !$entity->isLatestRevision()) {
+    return;
+  }
+  // Load current view display for the element.
+  $view_mode_parts = [
+    $element['#entity_type'],
+    $element['#bundle'],
+    $element['#view_mode'],
+  ];
+  $view_mode = implode('.', $view_mode_parts);
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
+  $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
+  if (!$display) {
+    // If no display found the "default" one is used. Try to load it.
+    $view_mode_default_parts = [
+      $element['#entity_type'],
+      $element['#bundle'],
+      'default',
+    ];
+    $view_mode = implode('.', $view_mode_default_parts);
+    $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
+  }
+  // If still no display or editable is not enabled skip preprocess.
+  if ($display && $display->getThirdPartySetting('editable_view_mode', 'enabled')) {
+    return;
+  }
+
+  // Fields that are computed fields are not editable.
+  $definition = $entity->getFieldDefinition($element['#field_name']);
+  if (!$definition->isComputed()) {
+    $variables['attributes']['data-editable-field-id'] = $entity->getEntityTypeId() . '/' . $entity->id() . '/' . $element['#field_name'] . '/' . $element['#language'] . '/' . $element['#view_mode'];
+  }
+}
