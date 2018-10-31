@@ -58,7 +58,12 @@ function editable_view_mode_preprocess_field(&$variables) {
   $element = $variables['element'];
   /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $entity = $element['#object'];
-
+  // If there is no access to update entity or entity is not in the
+  // latest revision - exit.
+  if (!$entity->access('update') || !$entity->isLatestRevision()) {
+    return;
+  }
+  // Load current view display for the element.
   $view_mode_parts = [
     $element['#entity_type'],
     $element['#bundle'],
@@ -68,6 +73,7 @@ function editable_view_mode_preprocess_field(&$variables) {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
   $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
   if (!$display) {
+    // If no display found the "default" one is used. Try to load it.
     $view_mode_default_parts = [
       $element['#entity_type'],
       $element['#bundle'],
@@ -76,7 +82,8 @@ function editable_view_mode_preprocess_field(&$variables) {
     $view_mode = implode('.', $view_mode_default_parts);
     $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
   }
-  if (!$entity->access('update') || !$display || $display->getThirdPartySetting('editable_view_mode', 'enabled') == 0 || !$entity->isLatestRevision()) {
+  // If still no display or editable is not enabled skip preprocess.
+  if ($display && $display->getThirdPartySetting('editable_view_mode', 'enabled')) {
     return;
   }
 
