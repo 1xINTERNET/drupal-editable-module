@@ -29,12 +29,60 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
     $build['#attached']['drupalSettings']['editable']['entities'][$entity->getEntityTypeId() . ':' . $entity->id()] = $serialized_entity;
     // Provide serialized field data.
+    $serialized_fields = [];
     $entityManager = \Drupal::service('entity_field.manager');
     $fields = $entityManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
     /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
     foreach ($fields as $field) {
-      $serialized_fields[$field->getName()] = $field->toArray();
+      $fieldDefinition = [];
+      if (method_exists($field, 'toArray')) {
+        $fieldDefinition += $field->toArray();
+      }
+      if (method_exists($field, 'getSchema')) {
+        $schema = $field->getSchema();
+        $fieldDefinition['schema'] = $schema['columns']['value'];
+      }
+      $serialized_fields[$field->getName()] = $fieldDefinition;
     }
     $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity->getEntityTypeId()][$entity->bundle()] = $serialized_fields;
+    $build['#attributes']['data-editable-entity-id'] = $entity->getEntityTypeId() . '/' . $entity->id();
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function editable_view_mode_preprocess_field(&$variables) {
+  // Add editable attributes to the field rendered arrays.
+  $variables['#cache']['contexts'][] = 'user.permissions';
+  $element = $variables['element'];
+  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+  $entity = $element['#object'];
+
+  $view_mode_parts = [
+    $element['#entity_type'],
+    $element['#bundle'],
+    $element['#view_mode'],
+  ];
+  $view_mode = implode('.', $view_mode_parts);
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
+  $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
+  if (!$display) {
+    $view_mode_default_parts = [
+      $element['#entity_type'],
+      $element['#bundle'],
+      'default',
+    ];
+    $view_mode = implode('.', $view_mode_default_parts);
+    $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($view_mode);
+  }
+  if (!$entity->access('update') || !$display || $display->getThirdPartySetting('editable_view_mode', 'enabled') == 0 || !$entity->isLatestRevision()) {
+    return;
+  }
+
+  // Fields that are computed fields are not editable.
+  $definition = $entity->getFieldDefinition($element['#field_name']);
+  if (!$definition->isComputed()) {
+    $variables['attributes']['data-editable-field-id'] = $entity->getEntityTypeId() . '/' . $entity->id() . '/' . $element['#field_name'] . '/' . $element['#language'] . '/' . $element['#view_mode'];
   }
 }
