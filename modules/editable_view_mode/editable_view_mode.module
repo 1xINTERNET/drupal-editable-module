@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -80,13 +81,30 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     $fields = $entityManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
     /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
     foreach ($fields as $field) {
+      $base_field = clone $field;
       $fieldDefinition = [];
-      if (method_exists($field, 'toArray')) {
-        $fieldDefinition += $field->toArray();
+      if (method_exists($base_field, 'toArray')) {
+        $fieldDefinition += $base_field->toArray();
       }
-      if (method_exists($field, 'getSchema')) {
-        $schema = $field->getSchema();
-        $fieldDefinition['schema'] = $schema['columns'];
+      if ($base_field instanceof FieldDefinitionInterface) {
+        $base_field = $field->getFieldStorageDefinition();
+      }
+      $schema = [];
+      if (method_exists($base_field, 'getSchema')) {
+        $schema = $base_field->getSchema();
+      }
+      if (method_exists($base_field, 'getPropertyDefinitions')) {
+        $property_definitions = $base_field->getPropertyDefinitions();
+        /** @var \Drupal\Core\TypedData\DataDefinitionInterface $propery_definition */
+        foreach ($property_definitions as $key => $property_definition) {
+          if ($property_definition->isComputed()) {
+            continue;
+          }
+          $fieldDefinition['schema'][$key] = $property_definition->toArray();
+          if (!empty($schema['columns'][$key])) {
+            $fieldDefinition['schema'][$key] += $schema['columns'][$key];
+          }
+        }
       }
       $fieldDefinition = _editable_view_mode_sanitize_field_definition($fieldDefinition);
       $serialized_fields[$field->getName()] = $fieldDefinition;
