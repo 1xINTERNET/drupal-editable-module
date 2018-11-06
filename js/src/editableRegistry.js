@@ -1,10 +1,11 @@
-import { createStore } from "@drupal-editable/core";
+import { createStore, hydrateStore } from "@drupal-editable/core";
 
 export class EditableRegistry {
   constructor() {
     this.initHooks = new Set();
     this.middlewares = new Set();
     this.enhancers = new Set();
+    this.hydrationData = [];
     this.reducers = {};
     this.store = null;
     this.initialized = false;
@@ -35,6 +36,14 @@ export class EditableRegistry {
     this.reducers[key] = reducer;
   }
 
+  addHydrationData(resource) {
+    const data = resource.data || resource || [];
+    this.hydrationData = [
+      ...this.hydrationData,
+      ...(Array.isArray(data) ? data : [data])
+    ];
+  }
+
   callInitHooks() {
     this.initHooks.forEach(hook => hook(this.store));
   }
@@ -46,6 +55,14 @@ export class EditableRegistry {
     this.initHooks.add(hook);
   }
 
+  hydrate(data) {
+    if (data) {
+      this.addHydrationData(data);
+    }
+    this.store.dispatch(hydrateStore({ data: this.hydrationData }));
+    this.hydrationData = [];
+  }
+
   async initialize(settings = {}) {
     this.store = await createStore({
       reducers: this.reducers,
@@ -53,6 +70,9 @@ export class EditableRegistry {
       enhancers: this.enhancers,
       ...settings
     });
+    if (settings.hydrationData) {
+      this.hydrate(settings.hydrationData);
+    }
     this.initialized = true;
     this.callInitHooks();
   }

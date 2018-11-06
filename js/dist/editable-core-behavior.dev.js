@@ -116,6 +116,14 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -132,6 +140,7 @@ function () {
     this.initHooks = new Set();
     this.middlewares = new Set();
     this.enhancers = new Set();
+    this.hydrationData = [];
     this.reducers = {};
     this.store = null;
     this.initialized = false;
@@ -165,6 +174,12 @@ function () {
       this.reducers[key] = reducer;
     }
   }, {
+    key: "addHydrationData",
+    value: function addHydrationData(resource) {
+      var data = resource.data || resource || [];
+      this.hydrationData = _toConsumableArray(this.hydrationData).concat(_toConsumableArray(Array.isArray(data) ? data : [data]));
+    }
+  }, {
     key: "callInitHooks",
     value: function callInitHooks() {
       var _this = this;
@@ -181,6 +196,18 @@ function () {
       }
 
       this.initHooks.add(hook);
+    }
+  }, {
+    key: "hydrate",
+    value: function hydrate(data) {
+      if (data) {
+        this.addHydrationData(data);
+      }
+
+      this.store.dispatch(Object(_drupal_editable_core__WEBPACK_IMPORTED_MODULE_0__["hydrateStore"])({
+        data: this.hydrationData
+      }));
+      this.hydrationData = [];
     }
   }, {
     key: "initialize",
@@ -204,10 +231,15 @@ function () {
 
               case 3:
                 this.store = _context.sent;
+
+                if (settings.hydrationData) {
+                  this.hydrate(settings.hydrationData);
+                }
+
                 this.initialized = true;
                 this.callInitHooks();
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -236,25 +268,61 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editableRegistry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editableRegistry */ "./src/editableRegistry.js");
+/* harmony import */ var _drupal_editable_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @drupal-editable/core */ "@drupal-editable/core");
+/* harmony import */ var _drupal_editable_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_drupal_editable_core__WEBPACK_IMPORTED_MODULE_1__);
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
 
 
 (function ($, window, Drupal) {
   // Instantiate the registry, this will be used by other modules to attach
   // their own middlewares, reducers etc.
-  window.Editable_Registry = new _editableRegistry__WEBPACK_IMPORTED_MODULE_0__["EditableRegistry"]();
+  var registry = window.Editable_Registry = new _editableRegistry__WEBPACK_IMPORTED_MODULE_0__["EditableRegistry"]();
   var domain = "".concat(window.location.protocol, "//").concat(window.location.host);
   Drupal.behaviors.editable_core_init = {
-    attach: function attach(context) {
-      // Only do this on the root doc ready call.
-      if (context !== document) {
-        return;
-      }
+    attach: function () {
+      var _attach = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(context, _ref) {
+        var editable;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                editable = _ref.editable;
 
-      window.Editable_Registry.initialize({
-        apiEndpoint: "".concat(domain, "/jsonapi"),
-        csrfTokenEndpoint: "".concat(domain, "/session/token")
-      });
-    }
+                if (!(context !== document)) {
+                  _context.next = 3;
+                  break;
+                }
+
+                return _context.abrupt("return");
+
+              case 3:
+                _context.next = 5;
+                return registry.initialize({
+                  apiEndpoint: "".concat(domain, "/jsonapi"),
+                  csrfTokenEndpoint: "".concat(domain, "/session/token"),
+                  hydrationData: editable && editable.entities && Object.keys(editable.entities).map(function (k) {
+                    return editable.entities[k].data;
+                  })
+                });
+
+              case 5:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      return function attach(_x, _x2) {
+        return _attach.apply(this, arguments);
+      };
+    }()
   };
 })(jQuery, window, Drupal);
 
