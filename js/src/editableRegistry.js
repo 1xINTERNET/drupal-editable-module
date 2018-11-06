@@ -6,6 +6,7 @@ export class EditableRegistry {
     this.middlewares = new Set();
     this.enhancers = new Set();
     this.hydrationData = [];
+    this.settingsData = {};
     this.reducers = {};
     this.store = null;
     this.initialized = false;
@@ -44,13 +45,21 @@ export class EditableRegistry {
     ];
   }
 
+  addSettingsData(settingsData) {
+    this.settingsData = { ...this.settingsData, ...settingsData };
+  }
+
+  callInitHook(hook) {
+    return hook(this.store, this);
+  }
+
   callInitHooks() {
-    this.initHooks.forEach(hook => hook(this.store));
+    this.initHooks.forEach(hook => this.callInitHook(hook));
   }
 
   addInitHook(hook) {
     if (this.initialized) {
-      return hook(this.store);
+      return this.callInitHook(hook);
     }
     this.initHooks.add(hook);
   }
@@ -63,6 +72,17 @@ export class EditableRegistry {
     this.hydrationData = [];
   }
 
+  getSettings(entityType) {
+    // normalize types
+    const _entityType = entityType.replace("/", "--");
+    if (!this.settingsData[_entityType]) {
+      throw new Error(
+        `No entity settings were found for type '${_entityType}'!`
+      );
+    }
+    return this.settingsData[_entityType];
+  }
+
   async initialize(settings = {}) {
     this.store = await createStore({
       reducers: this.reducers,
@@ -70,6 +90,9 @@ export class EditableRegistry {
       enhancers: this.enhancers,
       ...settings
     });
+    if (settings.settingsData) {
+      this.addSettingsData(settings.settingsData);
+    }
     if (settings.hydrationData) {
       this.hydrate(settings.hydrationData);
     }

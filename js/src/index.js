@@ -17,6 +17,7 @@ import { hydrateStore } from "@drupal-editable/core";
       await registry.initialize({
         apiEndpoint: `${domain}/jsonapi`,
         csrfTokenEndpoint: `${domain}/session/token`,
+        settingsData: editable && editable.entitySettings,
         hydrationData:
           editable &&
           editable.entities &&
