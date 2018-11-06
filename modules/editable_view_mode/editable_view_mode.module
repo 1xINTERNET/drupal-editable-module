@@ -12,16 +12,16 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Returns a string identifier for an entity
  *
- * @param object $serialized_entity
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  * @return string
  */
-function get_api_identifier_from_entity($serialized_entity, $onlyType = FALSE) {
-  $data = $serialized_entity['data'];
+function _editable_view_mode_entity_identifier(EntityInterface $entity, $onlyType = FALSE) {
+  $type = $entity->getEntityTypeId() . '--' . $entity->bundle();
 
   if ($onlyType) {
-    return $data['type'];
+    return $type;
   }
-  return $data['type'] . '/' . $data['id'];
+  return $type . '/' . $entity->uuid();
 }
 
 /**
@@ -42,7 +42,7 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     $build['#attached']['library'][] = 'editable/production';
     // Provide the JSON API serialized entity into drupalSettings.
     $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
-    $entity_identifier = get_api_identifier_from_entity($serialized_entity);
+    $entity_identifier = _editable_view_mode_entity_identifier($entity);
     $build['#attached']['drupalSettings']['editable']['entities'][$entity_identifier] = $serialized_entity;
     // Provide serialized field data.
     $serialized_fields = [];
@@ -60,7 +60,7 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
       }
       $serialized_fields[$field->getName()] = $fieldDefinition;
     }
-    $entity_type = get_api_identifier_from_entity($serialized_entity, TRUE);
+    $entity_type = _editable_view_mode_entity_identifier($entity, TRUE);
     $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_type] = $serialized_fields;
     $build['#attributes']['data-editable-entity-id'] = $entity_identifier;
   }
@@ -75,8 +75,7 @@ function editable_view_mode_preprocess_field(&$variables) {
   $element = $variables['element'];
   /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $entity = $element['#object'];
-  $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
-  $entity_identifier = get_api_identifier_from_entity($serialized_entity);
+  $entity_identifier = _editable_view_mode_entity_identifier($entity);
   // If there is no access to update entity or entity is not in the
   // latest revision - exit.
   if (!$entity->access('update') || !$entity->isLatestRevision()) {
