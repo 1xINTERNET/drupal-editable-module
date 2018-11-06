@@ -108,13 +108,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditableRegistry", function() { return EditableRegistry; });
 /* harmony import */ var _drupal_editable_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @drupal-editable/core */ "@drupal-editable/core");
 /* harmony import */ var _drupal_editable_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_drupal_editable_core__WEBPACK_IMPORTED_MODULE_0__);
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -141,6 +141,7 @@ function () {
     this.middlewares = new Set();
     this.enhancers = new Set();
     this.hydrationData = [];
+    this.settingsData = {};
     this.reducers = {};
     this.store = null;
     this.initialized = false;
@@ -180,19 +181,29 @@ function () {
       this.hydrationData = _toConsumableArray(this.hydrationData).concat(_toConsumableArray(Array.isArray(data) ? data : [data]));
     }
   }, {
+    key: "addSettingsData",
+    value: function addSettingsData(settingsData) {
+      this.settingsData = _objectSpread({}, this.settingsData, settingsData);
+    }
+  }, {
+    key: "callInitHook",
+    value: function callInitHook(hook) {
+      return hook(this.store, this);
+    }
+  }, {
     key: "callInitHooks",
     value: function callInitHooks() {
       var _this = this;
 
       this.initHooks.forEach(function (hook) {
-        return hook(_this.store);
+        return _this.callInitHook(hook);
       });
     }
   }, {
     key: "addInitHook",
     value: function addInitHook(hook) {
       if (this.initialized) {
-        return hook(this.store);
+        return this.callInitHook(hook);
       }
 
       this.initHooks.add(hook);
@@ -208,6 +219,18 @@ function () {
         data: this.hydrationData
       }));
       this.hydrationData = [];
+    }
+  }, {
+    key: "getSettings",
+    value: function getSettings(entityType) {
+      // normalize types
+      var _entityType = entityType.replace("/", "--");
+
+      if (!this.settingsData[_entityType]) {
+        throw new Error("No entity settings were found for type '".concat(_entityType, "'!"));
+      }
+
+      return this.settingsData[_entityType];
     }
   }, {
     key: "initialize",
@@ -232,6 +255,10 @@ function () {
               case 3:
                 this.store = _context.sent;
 
+                if (settings.settingsData) {
+                  this.addSettingsData(settings.settingsData);
+                }
+
                 if (settings.hydrationData) {
                   this.hydrate(settings.hydrationData);
                 }
@@ -239,7 +266,7 @@ function () {
                 this.initialized = true;
                 this.callInitHooks();
 
-              case 7:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -306,6 +333,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return registry.initialize({
                   apiEndpoint: "".concat(domain, "/jsonapi"),
                   csrfTokenEndpoint: "".concat(domain, "/session/token"),
+                  settingsData: editable && editable.entitySettings,
                   hydrationData: editable && editable.entities && Object.keys(editable.entities).map(function (k) {
                     return editable.entities[k].data;
                   })
