@@ -103,6 +103,8 @@ function _editable_view_mode_get_field_definitions($entity_type, $bundle) {
       }
     }
     $fieldDefinition = _editable_view_mode_sanitize_field_definition($fieldDefinition);
+    // Allow other modules to alter the field definition.
+    \Drupal::moduleHandler()->alter('editable_field_definition', $fieldDefinition);
     $serialized_fields[$field->getName()] = $fieldDefinition;
   }
   return $serialized_fields;
