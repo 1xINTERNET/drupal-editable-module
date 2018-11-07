@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -22,6 +23,89 @@ function _editable_view_mode_entity_identifier(EntityInterface $entity, $onlyTyp
     return $type;
   }
   return $type . '/' . $entity->uuid();
+}
+
+/**
+ * Sanitizes field definitions.
+ *
+ * Not to expose all field settings, remove unnecessary properties.
+ *
+ * @param array $field_definition
+ *   Field definitions.
+ *
+ * @return array
+ *   Modified field definitions
+ */
+function _editable_view_mode_sanitize_field_definition(array $field_definition) {
+  $sanitized_definition = [];
+  $allowed_properties = [
+    'label',
+    'required',
+    'schema',
+    'settings',
+    'default_value',
+    'description',
+    'field_type',
+  ];
+  foreach ($field_definition as $key => $value) {
+    if (in_array($key, $allowed_properties)) {
+      $sanitized_definition[$key] = $field_definition[$key];
+    }
+  }
+  return $sanitized_definition;
+}
+
+/**
+ * Provide field definitions for given entity type and bundle.
+ *
+ * @param string $entity_type
+ *   Entity type id.
+ * @param string $bundle
+ *   Entity bundle.
+ *
+ * @return array
+ *   Serialized field definitions for given entity type and bundle.
+ */
+function _editable_view_mode_get_field_definitions($entity_type, $bundle) {
+  $serialized_fields = [];
+  $entityManager = \Drupal::service('entity_field.manager');
+  $fields = $entityManager->getFieldDefinitions($entity_type, $bundle);
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
+  foreach ($fields as $field) {
+    $base_field = clone $field;
+    $fieldDefinition = [];
+    if (method_exists($base_field, 'toArray')) {
+      $fieldDefinition += $base_field->toArray();
+    }
+    if ($base_field instanceof FieldDefinitionInterface) {
+      $base_field = $field->getFieldStorageDefinition();
+      // Add target entity type to fields settings if it is entity reference.
+      if ($base_field->getType() == 'entity_reference') {
+        $base_field_array = $base_field->toArray();
+        $fieldDefinition['settings'] += $base_field_array['settings'];
+      }
+    }
+    $schema = [];
+    if (method_exists($base_field, 'getSchema')) {
+      $schema = $base_field->getSchema();
+    }
+    if (method_exists($base_field, 'getPropertyDefinitions')) {
+      $property_definitions = $base_field->getPropertyDefinitions();
+      /** @var \Drupal\Core\TypedData\DataDefinitionInterface $propery_definition */
+      foreach ($property_definitions as $key => $property_definition) {
+        if ($property_definition->isComputed()) {
+          continue;
+        }
+        $fieldDefinition['schema'][$key] = $property_definition->toArray();
+        if (!empty($schema['columns'][$key])) {
+          $fieldDefinition['schema'][$key] += $schema['columns'][$key];
+        }
+      }
+    }
+    $fieldDefinition = _editable_view_mode_sanitize_field_definition($fieldDefinition);
+    $serialized_fields[$field->getName()] = $fieldDefinition;
+  }
+  return $serialized_fields;
 }
 
 /**
@@ -44,24 +128,33 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     $serialized_entity = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
     $entity_identifier = _editable_view_mode_entity_identifier($entity);
     $build['#attached']['drupalSettings']['editable']['entities'][$entity_identifier] = $serialized_entity;
-    // Provide serialized field data.
-    $serialized_fields = [];
-    $entityManager = \Drupal::service('entity_field.manager');
-    $fields = $entityManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
-    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
-    foreach ($fields as $field) {
-      $fieldDefinition = [];
-      if (method_exists($field, 'toArray')) {
-        $fieldDefinition += $field->toArray();
-      }
-      if (method_exists($field, 'getSchema')) {
-        $schema = $field->getSchema();
-        $fieldDefinition['schema'] = $schema['columns'];
-      }
-      $serialized_fields[$field->getName()] = $fieldDefinition;
-    }
+    // Provide serialized field data for current entity type and bundle.
+    $serialized_fields = _editable_view_mode_get_field_definitions($entity->getEntityTypeId(), $entity->bundle());
     $entity_type = _editable_view_mode_entity_identifier($entity, TRUE);
     $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_type] = $serialized_fields;
+    // Check the serialized fields for entity references and add the field
+    // settings to entitySettings.
+    $entity_reference_definitions = [];
+    foreach ($serialized_fields as $serialized_field) {
+      if ($serialized_field['field_type'] == 'entity_reference') {
+        if (!empty($serialized_field['settings']['handler_settings']['target_bundles'])) {
+          foreach ($serialized_field['settings']['handler_settings']['target_bundles'] as $bundle) {
+            $entity_reference_definitions[$serialized_field['settings']['target_type']][] = $bundle;
+          }
+        }
+      }
+    }
+    if (!empty($entity_reference_definitions)) {
+      foreach ($entity_reference_definitions as $entity_type => $bundles) {
+        foreach ($bundles as $bundle) {
+          $entity_identifier = $entity_type . '--' . $bundle;
+          if (empty($build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier])) {
+            $serialized_fields = _editable_view_mode_get_field_definitions($entity_type, $bundle);
+            $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier] = $serialized_fields;
+          }
+        }
+      }
+    }
     $build['#attributes']['data-editable-entity-id'] = $entity_identifier;
   }
 }
