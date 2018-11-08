@@ -1,0 +1,8 @@
+name: Editable Address
+type: module
+description: "Provides additional functionality to support address element"
+package: Editable
+core: 8.x
+dependencies:
+  - editable_view_mode:editable_view_mode
+  - address:address

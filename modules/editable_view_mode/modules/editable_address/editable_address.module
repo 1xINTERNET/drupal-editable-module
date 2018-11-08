@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Contains functions for editable to support address fields.
+ */
+
+use CommerceGuys\Addressing\AddressFormat\AddressFormatHelper;
+use CommerceGuys\Addressing\AddressFormat\FieldOverrides;
+use CommerceGuys\Addressing\Subdivision\PatternType;
+use CommerceGuys\Addressing\Subdivision\SubdivisionRepository;
+use Drupal\address\FieldHelper;
+use Drupal\address\LabelHelper;
+use CommerceGuys\Addressing\Locale;
+
+/**
+ * Implements hook_editable_field_definition_alter().
+ */
+function editable_address_editable_field_definition_alter(&$field_definition) {
+  if (!empty($field_definition['field_type']) && $field_definition['field_type'] == 'address') {
+    $locale = \Drupal::languageManager()->getConfigOverrideLanguage()->getId();
+    $available_countries = $field_definition['settings']['available_countries'];
+    if (empty($available_countries)) {
+      $available_countries_defintions = \Drupal::service('address.country_repository')->getList($locale);
+      $available_countries = array_keys($available_countries_defintions);
+      $field_definition['settings']['available_countries'] = $available_countries;
+    }
+    foreach ($available_countries as $available_country) {
+      $field_overrides = new FieldOverrides($field_definition['settings']['field_overrides']);
+      /** @var \CommerceGuys\Addressing\AddressFormat\AddressFormat $address_format */
+      $address_format = \Drupal::service('address.address_format_repository')->get($available_country);
+      $required_fields = AddressFormatHelper::getRequiredFields($address_format, $field_overrides);
+      $labels = LabelHelper::getFieldLabels($address_format);
+      if (Locale::matchCandidates($address_format->getLocale(), $locale)) {
+        $format_string = $address_format->getLocalFormat();
+      }
+      else {
+        $format_string = $address_format->getFormat();
+      }
+      $grouped_fields = AddressFormatHelper::getGroupedFields($format_string, $field_overrides);
+      $used_fields = [];
+      foreach ($grouped_fields as $group => $fields) {
+        foreach ($fields as $field) {
+          $used_fields[] = $field;
+        }
+      }
+      $subdivision_properties = [];
+      foreach ($address_format->getUsedSubdivisionFields() as $field) {
+        $subdivision_properties[] = FieldHelper::getPropertyName($field);
+      }
+      // Load and insert the subdivisions for each parent id.
+      $locale = \Drupal::languageManager()->getConfigOverrideLanguage()->getId();
+      $subdivisions_list = [];
+      $subdivisions = [];
+      $parents = [$available_country];
+      foreach ($subdivision_properties as $index => $property) {
+        $result = \Drupal::service('address.subdivision_repository')
+          ->getList($parents, $locale);
+        if ($result) {
+          $subdivisions_list[$property] = $result;
+          _editable_address_subdivision($subdivisions_list[$property], $subdivisions, $parents, $locale, $subdivision_properties, $index);
+        }
+        break;
+      }
+      // Resolve the available postal code patterns for validation.
+      $fullPattern = $address_format->getPostalCodePattern();
+      $startPatterns = [];
+      /** @var \CommerceGuys\Addressing\Subdivision\Subdivision $subdivision */
+      foreach ($subdivisions as $subdivision) {
+        $pattern = $subdivision->getPostalCodePattern();
+        if (empty($pattern)) {
+          continue;
+        }
+
+        if ($subdivision->getPostalCodePatternType() == PatternType::START) {
+          $startPatterns[$subdivision->getCode()] = $pattern;
+        }
+      }
+      $field_definition['settings']['country_formats'][$available_country] = [
+        'required_fields' => $required_fields,
+        'labels' => $labels,
+        'grouped_fields' => $grouped_fields,
+        'used_fields' => $used_fields,
+        'subdivisions' => $subdivisions_list,
+        'validation' => [
+          'postal_code' => [
+            'pattern' => $fullPattern,
+            'by_subdivision' => $startPatterns,
+          ],
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * Recursive subdivisions.
+ *
+ * @param $subdivisions
+ * @param $parents
+ * @param $locale
+ * @param $subdivision_properties
+ * @param $index
+ */
+function _editable_address_subdivision(&$subdivisions, &$objects, $parents, $locale, $subdivision_properties, $index) {
+  if (!isset($subdivision_properties[$index + 1])) {
+    return;
+  }
+  $subdivisions_repository = new SubdivisionRepository();
+  foreach ($subdivisions as $key => $value) {
+    $index_parents = $parents;
+    $objects[] = $subdivisions_repository->get($key, $parents);
+    $index_parents[] = $value;
+    $result = \Drupal::service('address.subdivision_repository')
+      ->getList($index_parents, $locale);
+    if (!empty($result)) {
+      $index++;
+      $subdivisions[$subdivision_properties[$index]] = $result;
+      _editable_address_subdivision($subdivisions[$subdivision_properties[$index]], $objects, $index_parents, $locale, $subdivision_properties, $index);
+    }
+  }
+}
