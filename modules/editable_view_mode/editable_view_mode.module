@@ -149,10 +149,10 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     if (!empty($entity_reference_definitions)) {
       foreach ($entity_reference_definitions as $entity_type => $bundles) {
         foreach ($bundles as $bundle) {
-          $entity_identifier = $entity_type . '--' . $bundle;
-          if (empty($build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier])) {
+          $entity_identifier_type = $entity_type . '--' . $bundle;
+          if (empty($build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier_type])) {
             $serialized_fields = _editable_view_mode_get_field_definitions($entity_type, $bundle);
-            $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier] = $serialized_fields;
+            $build['#attached']['drupalSettings']['editable']['entitySettings'][$entity_identifier_type] = $serialized_fields;
           }
         }
       }
