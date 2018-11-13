@@ -82,7 +82,15 @@ function _editable_view_mode_get_field_definitions($entity_type, $bundle) {
       // Add target entity type to fields settings if it is entity reference.
       if ($base_field->getType() == 'entity_reference') {
         $base_field_array = $base_field->toArray();
-        $fieldDefinition['settings'] += $base_field_array['settings'];
+        // If base field definition has settings add them to the main
+        // definitions array.
+        if (!empty($base_field_array['settings'])) {
+          // If settings were not yet in main definitions array add them.
+          if (!isset($fieldDefinition['settings'])) {
+            $fieldDefinition['settings'] = [];
+          }
+          $fieldDefinition['settings'] += $base_field_array['settings'];
+        }
       }
     }
     $schema = [];
