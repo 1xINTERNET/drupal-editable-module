@@ -4,5 +4,5 @@ description: "Provides a shared redux store with entity cache and utility functi
 package: Editable
 core: 8.x
 dependencies:
-  - jsonapi:jsonapi
+  - jsonapi:jsonapi (>=8.x-2.0-rc1)
   - jsonapi_extras:jsonapi_extras
