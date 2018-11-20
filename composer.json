@@ -9,6 +9,8 @@
     "npm-asset/drupal-editable--seven-base-components": "^0.5.0",
     "npm-asset/react": "^16.5.2",
     "npm-asset/react-dom": "^16.5.2",
-    "npm-asset/prop-types": "^15.6.2"
+    "npm-asset/prop-types": "^15.6.2",
+    "drupal/jsonapi": "^2.0-rc1",
+    "drupal/jsonapi_extras": "^2.11"
   }
 }
