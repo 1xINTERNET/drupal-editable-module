@@ -22,7 +22,7 @@ class EditableStarterBlock extends BlockBase {
     $nid = \Drupal::routeMatch()->getParameter('node')->id();
     $entity = Node::load($nid);
     // … serialize it using the jsonapi service to a response we would get from the API
-    $entityFromJsonApi = \Drupal::service('jsonapi.entity.to_jsonapi')->normalize($entity);
+    $entityFromJsonApi = \Drupal::service('jsonapi_extras.entity.to_jsonapi')->normalize($entity);
     // … and read the correct type/bundle and uuid we need to query the API correctly.
     $entityData = $entityFromJsonApi['data'];
     $typeArray = mb_split('--', $entityData['type']);

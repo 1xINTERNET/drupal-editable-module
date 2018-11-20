@@ -5,3 +5,4 @@ package: Editable
 core: 8.x
 dependencies:
   - jsonapi:jsonapi
+  - jsonapi_extras:jsonapi_extras
