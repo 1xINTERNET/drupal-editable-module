@@ -146,7 +146,7 @@ function editable_view_mode_entity_view_alter(&$build, EntityInterface $entity, 
     // settings to entitySettings.
     $entity_reference_definitions = [];
     foreach ($serialized_fields as $serialized_field) {
-      if ($serialized_field['field_type'] == 'entity_reference') {
+      if (!empty($serialized_field['field_type']) && $serialized_field['field_type'] == 'entity_reference') {
         if (!empty($serialized_field['settings']['handler_settings']['target_bundles'])) {
           foreach ($serialized_field['settings']['handler_settings']['target_bundles'] as $bundle) {
             $entity_reference_definitions[$serialized_field['settings']['target_type']][] = $bundle;
