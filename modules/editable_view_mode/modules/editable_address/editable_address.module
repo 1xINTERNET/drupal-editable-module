@@ -26,7 +26,13 @@ function editable_address_editable_field_definition_alter(&$field_definition) {
       $field_definition['settings']['available_countries'] = $available_countries;
     }
     foreach ($available_countries as $available_country) {
-      $field_overrides = new FieldOverrides($field_definition['settings']['field_overrides']);
+      $overrides = $field_definition['settings']['field_overrides'];
+      foreach ($overrides as $field_name => $override) {
+        if (is_array($override)) {
+          $overrides[$field_name] = reset($override);
+        }
+      }
+      $field_overrides = new FieldOverrides($overrides);
       /** @var \CommerceGuys\Addressing\AddressFormat\AddressFormat $address_format */
       $address_format = \Drupal::service('address.address_format_repository')->get($available_country);
       $required_fields = AddressFormatHelper::getRequiredFields($address_format, $field_overrides);
