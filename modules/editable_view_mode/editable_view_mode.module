@@ -46,6 +46,7 @@ function _editable_view_mode_sanitize_field_definition(array $field_definition) 
     'default_value',
     'description',
     'field_type',
+    'cardinality'
   ];
   foreach ($field_definition as $key => $value) {
     if (in_array($key, $allowed_properties)) {
@@ -79,6 +80,7 @@ function _editable_view_mode_get_field_definitions($entity_type, $bundle) {
     }
     if ($base_field instanceof FieldDefinitionInterface) {
       $base_field = $field->getFieldStorageDefinition();
+      $fieldDefinition['cardinality'] = $base_field->getCardinality();
       // Add target entity type to fields settings if it is entity reference.
       if ($base_field->getType() == 'entity_reference') {
         $base_field_array = $base_field->toArray();
