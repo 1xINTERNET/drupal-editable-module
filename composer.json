@@ -5,8 +5,8 @@
   "homepage": "http://drupal.org/project/editable",
   "license": "GPL-3.0",
   "require": {
-    "npm-asset/drupal-editable--core": "^0.5.3",
-    "npm-asset/drupal-editable--seven-base-components": "^0.5.3",
+    "npm-asset/drupal-editable--core": "^0.5.4",
+    "npm-asset/drupal-editable--seven-base-components": "^0.5.4",
     "npm-asset/react": "^16.5.2",
     "npm-asset/react-dom": "^16.5.2",
     "npm-asset/prop-types": "^15.6.2",
